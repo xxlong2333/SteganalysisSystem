@@ -127,8 +127,25 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
+# Media files (Uploaded files)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# 模型文件路径
+STEGANALYSIS_MODEL_PATH = os.path.join(BASE_DIR, 'myApp', 'steganalysis', 'models', 'stegan_net.pth')
+
+# 允许上传的图片格式
+ALLOWED_IMAGE_TYPES = [
+    'image/jpeg',
+    'image/png',
+    'image/bmp',
+    'image/tiff'
+]
+
+# 最大上传文件大小 (10MB)
+MAX_UPLOAD_SIZE = 10 * 1024 * 1024
