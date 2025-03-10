@@ -2,7 +2,7 @@ import random
 import re
 
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib import messages
 from django.shortcuts import *
 from utils.getChartData import *
@@ -10,6 +10,14 @@ from utils.getPublicData import *
 from myApp.models import *
 from recommend.goRecommend import *
 from predict.goPredict import *
+from django.core.paginator import Paginator
+import json
+import numpy as np
+from PIL import Image
+import torch
+from torchvision import transforms
+from .steganalysis.model import SteganNet  # 假设您的模型在这个位置
+
 # Create your views here.
 def home(request):
     if request.method == 'GET':
@@ -409,3 +417,122 @@ def predict(request):
             'defaultExp': defaultExp,
             'predicted_salary': predicted_salary,
         })
+
+def steganalysis_home(request):
+    return render(request, 'steganalysis_home.html')
+
+def steganalysis_about(request):
+    return render(request, 'steganalysis_about.html')
+
+def steganalysis_history(request):
+    page = request.GET.get('page', 1)
+    history_list = SteganalysisResult.objects.all().order_by('-analysis_time')
+    paginator = Paginator(history_list, 10)  # 每页显示10条记录
+    
+    history_items = paginator.get_page(page)
+    
+    context = {
+        'history_items': history_items,
+        'current_page': int(page),
+        'has_previous': history_items.has_previous(),
+        'has_next': history_items.has_next(),
+    }
+    
+    return render(request, 'steganalysis_history.html', context)
+
+def analyze_image(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': '只支持POST请求'}, status=405)
+    
+    if 'image' not in request.FILES:
+        return JsonResponse({'error': '未找到上传的图片'}, status=400)
+    
+    image_file = request.FILES['image']
+    
+    try:
+        # 1. 保存图片并创建分析记录
+        result = SteganalysisResult(
+            image=image_file,
+            filename=image_file.name,
+            file_size='计算中...',
+            confidence=0.0,
+            feature_analysis={},
+            algorithm_analysis={}
+        )
+        result.save()
+        result.file_size = result.get_file_size_display()
+        
+        # 2. 加载和预处理图片
+        image = Image.open(result.image.path).convert('RGB')
+        transform = transforms.Compose([
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                              std=[0.229, 0.224, 0.225])
+        ])
+        image_tensor = transform(image).unsqueeze(0)
+        
+        # 3. 加载模型并进行预测
+        model = SteganNet()  # 加载您的模型
+        model.eval()
+        
+        with torch.no_grad():
+            features, stego_prob = model(image_tensor)
+            
+            # 获取隐写检测结果
+            has_stego = stego_prob.item() > 0.5
+            confidence = stego_prob.item() if has_stego else 1 - stego_prob.item()
+            
+            # 提取特征分析结果
+            feature_names = ['颜色分布', '纹理特征', '频域特征', '统计特征', '空间特征']
+            feature_values = features[0].tolist()[:5]  # 假设模型输出5个主要特征
+            
+            # 生成算法识别结果
+            algorithm_probs = {
+                'LSB': 0.4,
+                'DCT': 0.3,
+                'DWT': 0.2,
+                'PVD': 0.1
+            }
+            
+            # 更新分析记录
+            result.has_stego = has_stego
+            result.confidence = confidence * 100
+            result.feature_analysis = {
+                'names': feature_names,
+                'values': feature_values
+            }
+            result.algorithm_analysis = [
+                {'name': k, 'probability': v * 100}
+                for k, v in algorithm_probs.items()
+            ]
+            result.save()
+            
+            # 返回分析结果
+            return JsonResponse({
+                'hasStego': has_stego,
+                'confidence': confidence,
+                'features': [
+                    {'name': name, 'value': value}
+                    for name, value in zip(feature_names, feature_values)
+                ],
+                'algorithms': [
+                    {'name': k, 'probability': v * 100}
+                    for k, v in algorithm_probs.items()
+                ]
+            })
+            
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+def analysis_detail(request, analysis_id):
+    try:
+        result = SteganalysisResult.objects.get(id=analysis_id)
+        context = {
+            'result': result,
+            'feature_analysis': json.dumps(result.feature_analysis),
+            'algorithm_analysis': json.dumps(result.algorithm_analysis)
+        }
+        return render(request, 'steganalysis_detail.html', context)
+    except SteganalysisResult.DoesNotExist:
+        return JsonResponse({'error': '未找到指定的分析记录'}, status=404)

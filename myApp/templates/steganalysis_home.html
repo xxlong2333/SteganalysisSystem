@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../../static/res/style.css">
+    <link rel="stylesheet" href="../../static/assets/css/nucleo-icons.css">
+    <title>图像隐写分析系统</title>
+</head>
+
+<style>
+    .btn-primary {
+        color: #fff;
+        background-color: #4465c6;
+        border-color: #405fba;
+        height: 30px;
+        width: 100px;
+        border-radius: 10px;
+    }
+    
+    .upload-area {
+        border: 2px dashed #4465c6;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        margin: 20px;
+        cursor: pointer;
+    }
+    
+    .upload-area:hover {
+        background-color: rgba(68, 101, 198, 0.1);
+    }
+    
+    .analysis-result {
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+        padding: 15px;
+        margin: 10px;
+    }
+</style>
+
+<body class="fill-parent">
+<div class="head">
+    <div class="title">
+        <div class="title-left"></div>
+        <div class="title-value"><label>深度学习图像隐写分析系统</label></div>
+        <div class="title-right"></div>
+        <div style="position: absolute;right: 0;top: 0">
+            <a href="/myApp/history" style="text-decoration: none; color: #fff">
+                <button class="btn-primary" style="margin-right: 10px">分析历史</button>
+            </a>
+            <a href="/myApp/about" style="text-decoration: none; color: #fff">
+                <button class="btn-primary" style="margin-right: 10px">关于系统</button>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="content">
+    <div class="layout layout-left-top">
+        <div class="panel">
+            <div class="title"><label>图像上传区域</label></div>
+            <div class="upload-area" id="uploadArea">
+                <img src="../../static/assets/images/upload.png" style="width: 64px; height: 64px; margin-bottom: 10px;">
+                <p>点击或拖拽图片到此处上传</p>
+                <input type="file" id="fileInput" style="display: none;" accept="image/*">
+            </div>
+        </div>
+    </div>
+    
+    <div class="layout layout-right-top">
+        <div class="panel">
+            <div class="title"><label>分析结果</label></div>
+            <div class="analysis-result">
+                <h3 style="color: #4465c6;">检测结果</h3>
+                <div id="detectionResult">
+                    <p>等待图片上传...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="layout layout-left-bottom">
+        <div class="panel">
+            <div class="title"><label>图像特征分析</label></div>
+            <div id="featureAnalysis" style="width: 100%; height: 300px;"></div>
+        </div>
+    </div>
+    
+    <div class="layout layout-right-bottom">
+        <div class="panel">
+            <div class="title"><label>隐写算法识别</label></div>
+            <div id="algorithmAnalysis" style="width: 100%; height: 300px;"></div>
+        </div>
+    </div>
+</div>
+
+<script src="../../static/static/js/echarts.js"></script>
+<script>
+// 上传功能
+const uploadArea = document.getElementById('uploadArea');
+const fileInput = document.getElementById('fileInput');
+
+uploadArea.addEventListener('click', () => {
+    fileInput.click();
+});
+
+uploadArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadArea.style.backgroundColor = 'rgba(68, 101, 198, 0.2)';
+});
+
+uploadArea.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    uploadArea.style.backgroundColor = 'transparent';
+});
+
+uploadArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadArea.style.backgroundColor = 'transparent';
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        handleFile(files[0]);
+    }
+});
+
+fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+        handleFile(e.target.files[0]);
+    }
+});
+
+function handleFile(file) {
+    // 这里添加文件处理和上传逻辑
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    // 显示上传状态
+    document.getElementById('detectionResult').innerHTML = '<p>正在分析中...</p>';
+    
+    // 发送到后端进行分析
+    fetch('/analyze_image', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        updateAnalysisResults(data);
+    })
+    .catch(error => {
+        document.getElementById('detectionResult').innerHTML = '<p style="color: red;">分析失败，请重试</p>';
+    });
+}
+
+function updateAnalysisResults(data) {
+    // 更新检测结果
+    const detectionResult = document.getElementById('detectionResult');
+    detectionResult.innerHTML = `
+        <p>检测状态: ${data.hasStego ? '发现隐写' : '未发现隐写'}</p>
+        <p>置信度: ${(data.confidence * 100).toFixed(2)}%</p>
+    `;
+    
+    // 更新特征分析图表
+    updateFeatureChart(data.features);
+    
+    // 更新算法识别图表
+    updateAlgorithmChart(data.algorithms);
+}
+
+function updateFeatureChart(features) {
+    const chart = echarts.init(document.getElementById('featureAnalysis'));
+    const option = {
+        tooltip: {
+            trigger: 'axis'
+        },
+        xAxis: {
+            type: 'category',
+            data: features.map(f => f.name)
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [{
+            data: features.map(f => f.value),
+            type: 'bar',
+            itemStyle: {
+                color: '#4465c6'
+            }
+        }]
+    };
+    chart.setOption(option);
+}
+
+function updateAlgorithmChart(algorithms) {
+    const chart = echarts.init(document.getElementById('algorithmAnalysis'));
+    const option = {
+        tooltip: {
+            trigger: 'item'
+        },
+        series: [{
+            type: 'pie',
+            radius: '70%',
+            data: algorithms.map(a => ({
+                name: a.name,
+                value: a.probability
+            })),
+            emphasis: {
+                itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }]
+    };
+    chart.setOption(option);
+}
+</script>
+</body>
+</html>

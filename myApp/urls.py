@@ -39,4 +39,10 @@ path("logOut/", views.logOut, name="logOut"),
     path("recommendPage/", views.recommendPage, name="recommendPage"),
     path("predict/", views.predict, name="predict"),
 
+    # 图像隐写分析系统的URL
+    path('steganalysis/', views.steganalysis_home, name='steganalysis_home'),
+    path('steganalysis/about/', views.steganalysis_about, name='steganalysis_about'),
+    path('steganalysis/history/', views.steganalysis_history, name='steganalysis_history'),
+    path('steganalysis/analyze/', views.analyze_image, name='analyze_image'),
+    path('steganalysis/detail/<int:analysis_id>/', views.analysis_detail, name='analysis_detail'),
 ]

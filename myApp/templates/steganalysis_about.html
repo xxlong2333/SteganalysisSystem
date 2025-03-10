@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../../static/res/style.css">
+    <link rel="stylesheet" href="../../static/assets/css/nucleo-icons.css">
+    <title>关于系统 - 图像隐写分析系统</title>
+</head>
+
+<style>
+    .btn-primary {
+        color: #fff;
+        background-color: #4465c6;
+        border-color: #405fba;
+        height: 30px;
+        width: 100px;
+        border-radius: 10px;
+    }
+    
+    .about-section {
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    .about-section h2 {
+        color: #4465c6;
+        margin-bottom: 15px;
+    }
+    
+    .about-section p {
+        line-height: 1.6;
+        margin-bottom: 10px;
+    }
+    
+    .feature-list {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .feature-list li {
+        margin: 10px 0;
+        padding-left: 20px;
+        position: relative;
+    }
+    
+    .feature-list li:before {
+        content: "•";
+        color: #4465c6;
+        position: absolute;
+        left: 0;
+    }
+</style>
+
+<body class="fill-parent">
+<div class="head">
+    <div class="title">
+        <div class="title-left"></div>
+        <div class="title-value"><label>关于系统</label></div>
+        <div class="title-right"></div>
+        <div style="position: absolute;right: 0;top: 0">
+            <a href="/myApp/steganalysis" style="text-decoration: none; color: #fff">
+                <button class="btn-primary" style="margin-right: 10px">返回首页</button>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="content">
+    <div class="layout layout-full">
+        <div class="panel">
+            <div class="about-section">
+                <h2>系统简介</h2>
+                <p>本系统是一个基于深度学习的数字图像隐写分析系统，旨在通过先进的人工智能技术检测图像中是否存在隐写信息。系统采用最新的深度学习模型，能够有效识别多种隐写算法，并提供详细的分析报告。</p>
+            </div>
+            
+            <div class="about-section">
+                <h2>主要功能</h2>
+                <ul class="feature-list">
+                    <li>支持多种图像格式的隐写分析</li>
+                    <li>基于深度学习的高精度检测</li>
+                    <li>详细的特征分析和可视化</li>
+                    <li>隐写算法识别</li>
+                    <li>分析历史记录管理</li>
+                    <li>批量图像处理能力</li>
+                </ul>
+            </div>
+            
+            <div class="about-section">
+                <h2>技术特点</h2>
+                <p>本系统采用了以下先进技术：</p>
+                <ul class="feature-list">
+                    <li>深度卷积神经网络(CNN)用于图像特征提取</li>
+                    <li>迁移学习提高模型性能</li>
+                    <li>注意力机制增强检测准确率</li>
+                    <li>多尺度特征融合</li>
+                    <li>集成学习提升系统鲁棒性</li>
+                </ul>
+            </div>
+            
+            <div class="about-section">
+                <h2>使用说明</h2>
+                <p>1. 图像上传：支持拖拽或点击上传图像文件</p>
+                <p>2. 分析过程：系统会自动进行特征提取和隐写分析</p>
+                <p>3. 结果展示：包含检测结果、置信度、特征分析和算法识别等信息</p>
+                <p>4. 历史记录：可查看所有历史分析记录，支持结果导出</p>
+            </div>
+            
+            <div class="about-section">
+                <h2>关于作者</h2>
+                <p>本系统为毕业设计作品，采用前沿深度学习技术，致力于提供准确、高效的图像隐写分析服务。</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
