@@ -18,29 +18,29 @@ class History(models.Model):
 
     class Meta:
         db_table = "history"
-
-class SteganalysisResult(models.Model):
-    image = models.ImageField(upload_to='steganalysis_images/')
-    filename = models.CharField(max_length=255)
-    file_size = models.CharField(max_length=50)
-    upload_time = models.DateTimeField(auto_now_add=True)
-    analysis_time = models.DateTimeField(auto_now=True)
-    has_stego = models.BooleanField(default=False)
-    confidence = models.FloatField()
-    
-    # 存储特征分析结果（JSON格式）
-    feature_analysis = models.JSONField()
-    # 存储算法识别结果（JSON格式）
-    algorithm_analysis = models.JSONField()
-    
-    def __str__(self):
-        return f"{self.filename} - {'隐写' if self.has_stego else '无隐写'}"
-    
-    def get_file_size_display(self):
-        size = os.path.getsize(self.image.path)
-        for unit in ['B', 'KB', 'MB', 'GB']:
-            if size < 1024:
-                return f"{size:.2f} {unit}"
-            size /= 1024
-        return f"{size:.2f} TB"
-
+#
+# class SteganalysisResult(models.Model):
+#     image = models.ImageField(upload_to='steganalysis_images/')
+#     filename = models.CharField(max_length=255)
+#     file_size = models.CharField(max_length=50)
+#     upload_time = models.DateTimeField(auto_now_add=True)
+#     analysis_time = models.DateTimeField(auto_now=True)
+#     has_stego = models.BooleanField(default=False)
+#     confidence = models.FloatField()
+#
+#     # 存储特征分析结果（JSON格式）
+#     feature_analysis = models.JSONField()
+#     # 存储算法识别结果（JSON格式）
+#     algorithm_analysis = models.JSONField()
+#
+#     def __str__(self):
+#         return f"{self.filename} - {'隐写' if self.has_stego else '无隐写'}"
+#
+#     def get_file_size_display(self):
+#         size = os.path.getsize(self.image.path)
+#         for unit in ['B', 'KB', 'MB', 'GB']:
+#             if size < 1024:
+#                 return f"{size:.2f} {unit}"
+#             size /= 1024
+#         return f"{size:.2f} TB"
+#

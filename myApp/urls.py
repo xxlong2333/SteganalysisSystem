@@ -18,31 +18,31 @@ from django.urls import path, include
 from myApp import views
 
 urlpatterns = [
+
     path("home/", views.home, name="home"),
-    path("salaryChar/", views.salaryChar, name="salaryChar"),
-path("logOut/", views.logOut, name="logOut"),
     path("login/", views.login, name="login"),
-
-    path("educationChar/", views.educationChar, name="educationChar"),
-    path("registry/", views.registry, name="registry"),
-    path("industryChar/", views.industryChar, name="industryChar"),
-    path("cityChar/", views.cityChar, name="cityChar"),
-    path("tableData/", views.tableData, name="tableData"),
-    path("changeInfo/", views.changeInfo, name="changeInfo"),
-    path("addHistory/<int:jobId>/", views.addHistory, name="addHistory"),
-    path("delHistory/<int:jobId>/", views.delHistory, name="delHistory"),
-    path("collectData/", views.collectData, name="collectData"),
-
-    path("titleCloud/", views.titleCloud, name="titleCloud"),
-
-    path("tagCloud/", views.tagCloud, name="tagCloud"),
-    path("recommendPage/", views.recommendPage, name="recommendPage"),
-    path("predict/", views.predict, name="predict"),
-
-    # 图像隐写分析系统的URL
-    path('steganalysis/', views.steganalysis_home, name='steganalysis_home'),
-    path('steganalysis/about/', views.steganalysis_about, name='steganalysis_about'),
-    path('steganalysis/history/', views.steganalysis_history, name='steganalysis_history'),
-    path('steganalysis/analyze/', views.analyze_image, name='analyze_image'),
-    path('steganalysis/detail/<int:analysis_id>/', views.analysis_detail, name='analysis_detail'),
+    # path("salaryChar/", views.salaryChar, name="salaryChar"),
+    # path("logOut/", views.logOut, name="logOut"),
+    # path("educationChar/", views.educationChar, name="educationChar"),
+    # path("registry/", views.registry, name="registry"),
+    # path("industryChar/", views.industryChar, name="industryChar"),
+    # path("cityChar/", views.cityChar, name="cityChar"),
+    # path("tableData/", views.tableData, name="tableData"),
+    # path("changeInfo/", views.changeInfo, name="changeInfo"),
+    # path("addHistory/<int:jobId>/", views.addHistory, name="addHistory"),
+    # path("delHistory/<int:jobId>/", views.delHistory, name="delHistory"),
+    # path("collectData/", views.collectData, name="collectData"),
+    #
+    # path("titleCloud/", views.titleCloud, name="titleCloud"),
+    #
+    # path("tagCloud/", views.tagCloud, name="tagCloud"),
+    # path("recommendPage/", views.recommendPage, name="recommendPage"),
+    # path("predict/", views.predict, name="predict"),
+    #
+    # # 图像隐写分析系统的URL
+    # path('steganalysis/', views.steganalysis_home, name='steganalysis_home'),
+    # path('steganalysis/about/', views.steganalysis_about, name='steganalysis_about'),
+    # path('steganalysis/history/', views.steganalysis_history, name='steganalysis_history'),
+    # path('steganalysis/analyze/', views.analyze_image, name='analyze_image'),
+    # #path('steganalysis/detail/<int:analysis_id>/', views.analysis_detail, name='analysis_detail'),
 ]
