@@ -34,7 +34,7 @@ if __name__ == "__main__":
         option("header", True).\
         option("encoding", "utf-8").\
         schema(schema=schema).\
-        load("./jobData.csv")
+        # load("./jobData.csv")
 
     df.drop_duplicates()
     df = df.withColumn("id", monotonically_increasing_id())
